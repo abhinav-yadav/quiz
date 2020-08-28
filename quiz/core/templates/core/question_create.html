@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<form  action="{% url 'core:create_questions' slug=quiz.slug %}" method="post">
+  {% csrf_token %}
+  {{questionform|crispy}}
+  {{optionform|crispy}}
+</form>
+{% endblock %}
