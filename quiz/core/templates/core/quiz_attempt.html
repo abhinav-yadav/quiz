@@ -10,7 +10,7 @@
         {{question.question}} <br>
         <div class="container">
           {% for option in question.get_options %}
-            <input type="radio" id="{{option.id}}"  name="{{question.id}}" value="{{ option.option }}">
+            <input type="radio" id="{{option.id}}"  name={{question.id}} value="{{ option.option }}" required>
             <label for="{{option.id}}">{{option.option}}</label><br>
           {% endfor %}
         </div>
