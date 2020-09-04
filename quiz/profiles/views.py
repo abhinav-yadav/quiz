@@ -26,7 +26,7 @@ class ProfileView(View):
         instance = User.objects.get(username=slug)
         id = instance.id
         profile = Profile.objects.get(user=id)
-        quizes = instance.quiz_set.all()
+        quizes = Quiz.objects.filter(author = instance)
         instance = request.user
         data = {'profile':profile , 'user':instance , 'quizes' : quizes}
         return render(request,'profiles/profile_view.html',data)

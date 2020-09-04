@@ -20,3 +20,11 @@ class Home(View):
 
 def about(request):
     return render(request,'about.html')
+
+
+class Setting(View):
+    def get(self, request):
+        if self.request.user.is_authenticated:
+            return render(request,'settings.html')
+        else:
+            return redirect('account_login')

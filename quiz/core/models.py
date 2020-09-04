@@ -67,6 +67,6 @@ class Record(models.Model):
 
 class Response(models.Model):
     record = models.ForeignKey(Record, default = None, on_delete = models.CASCADE)
-    answers = ArrayField(models.CharField(max_length=400, default=None))
+    answers = ArrayField(models.CharField(max_length=400, default=None, null = True))
     total_questions = models.IntegerField(default = 0)
     correct = models.IntegerField(default=0)

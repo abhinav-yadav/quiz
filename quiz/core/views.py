@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
 
@@ -78,6 +80,7 @@ class AttemptQuiz(View):
         #     record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
         #     if datetime.now()-record.timestamp:
 
+
         record = Record(user = request.user, quiz=quiz, questions=questions_order)
         key =[]
         for i in questions:
@@ -87,6 +90,9 @@ class AttemptQuiz(View):
                     key.append(option.option)
         record.key = key
         record.save()
+        # paginator = Paginator(questions, 1)
+        # page = request.GET.get('page')
+        # questions = paginator.get_page(page)
 
         context ={
             'questions' : questions,
@@ -109,6 +115,81 @@ class AttemptQuiz(View):
         response = Response(record = record, answers = answers, total_questions = quiz.get_total_no_of_questions(), correct = correct_count )
         response.save()
         return redirect('core:quiz_result', slug = quiz.slug, id=record.id)
+
+# class AttemptQuiz(View):
+#     def get(self, request, slug):
+#         quiz = get_object_or_404(Quiz, slug=slug)
+#         questions  = Question.objects.filter(quiz=quiz).order_by('?')
+#         questions_order = []
+#         for i in questions:
+#             questions_order.append(i.id)
+#         # # resume feature
+#         # try:
+#         #     record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
+#         #     if datetime.now()-record.timestamp:
+#
+#
+#         record = Record(user = request.user, quiz=quiz, questions=questions_order)
+#         key =[]
+#         for i in questions:
+#             options = Option.objects.filter(question=i)
+#             for option in options:
+#                 if option.answer:
+#                     key.append(option.option)
+#         record.key = key
+#         record.save()
+#
+#         answers = [None]*len(key)
+#         response = Response(record = record, answers = answers ,total_questions = len(key))
+#         response.save()
+#         # paginator = Paginator(questions, 1)
+#         # page = request.GET.get('page')
+#         # questions = paginator.get_page(page)
+#         question = questions[0]
+#         index = 0
+#         context ={
+#             'question' : question,
+#             'quiz' : quiz,
+#             'response' : response,
+#             'index' : index,
+#             'record' : record,
+#         }
+#         return render(self.request, 'core/quiz_attempt_1.html', context)
+#
+#     def post(self, request, slug):
+#         record = get_object_or_404(Record, id = request.POST.get('record_id'))
+#         response = get_object_or_404(Response, id = request.POST.get('response_id'))
+#         index = request.POST.get('index')
+#         response.answers[index] = request.POST.get('question_response')
+#         response.save()
+#         index += 1
+#         if index < len(record.questions):
+#             question = get_object_or_404(Question, id = record.questions[index])
+#             response_data['question'] = question
+#             response_data['index'] = index
+#             return JsonResponse(response_data)
+#         else:
+#             print('!@@#########################@@!')
+#             pass
+
+
+class RecordResponse(View):
+    def post(self, request):
+        record = get_object_or_404(Record, id = request.POST.get('record_id'))
+        response = get_object_or_404(Response, id = request.POST.get('response_id'))
+        index = request.POST.get('index')
+        response.answers[index] = request.POST.get('question_response')
+        response.save()
+        index += 1
+        if index < len(record.questions):
+            question = get_object_or_404(Question, id = record.questions[index])
+            response_data['question'] = question
+            response_data['index'] = index
+            return JsonResponse(response_data)
+        else:
+            print('!@@#########################@@!')
+            pass
+
 
 
 class Result(View):

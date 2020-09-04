@@ -6,7 +6,7 @@
   <div class="grid-item">
     <figure class="article">
       {% if quiz.image %}
-      <div class="image"><img src="{{ quiz.image.url }}" alt="" /></div>
+      <div class="image"><img src="{{ quiz.image.url }}" alt="quiz_image"></div>
       {% endif %}
       <figcaption>
         <div class="date"><span class="day">{{ quiz.timestamp|date:"d" }}</span><span class="month">{{ quiz.timestamp|date:"F" }}</span></div>
@@ -14,6 +14,7 @@
         <p>
           a test of knowledge, especially as a competition between individuals or teams as a form of entertainment.
         </p>
+        <button type="button" class="mr-1 badge badge-info ar" onclick="window.location.href='{% url 'core:attempt_quiz' slug=quiz.slug %}';">attempt<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
       </figcaption>
       <footer>
         <div class="views"><i class="ion-eye"></i>99</div>
