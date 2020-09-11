@@ -2,9 +2,25 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form  action="{% url 'core:create_questions' slug=quiz.slug %}" method="post">
+<form action="{% url 'core:create_questions' slug=quiz.slug %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{questionform|crispy}}
-  {{optionform|crispy}}
+  <br>
+    <h6>Options</h6>
+    <div id ="myForm" class="myForm">
+    {% for form in formset %}
+    {{form|crispy}}
+    {% endfor %}
+  </div>
+  {{ formset.management_form }}
+  <button type="submit" name="button">Create</button>
 </form>
+{% endblock %}
+{% block custom_js %}
+<script src="{% static 'formset_bootstrap/js/jquery.formset.js' %}">></script>
+<script type="text/javascript">
+    $(function() {
+        $('#myForm').formset();
+    })
+</script>
 {% endblock %}

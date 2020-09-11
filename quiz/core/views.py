@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -10,6 +11,7 @@ from .forms import (
     QuizForm,
     QuestionForm,
     OptionForm,
+    optionformset,
 )
 from .models import (
     Quiz,
@@ -57,15 +59,35 @@ class CreateQuestion(View):
     def get(self, request, slug):
         quiz = get_object_or_404(Quiz, slug=slug)
         questionform = QuestionForm(request.GET or None)
-        optionform = OptionForm(request.GET or None)
+        formset = optionformset(queryset = Option.objects.none())
         context = {
             'quiz' : quiz,
             'questionform' : questionform,
-            'optionform' : optionform,
+            'formset' : formset,
         }
         return render(self.request, 'core/question_create.html', context)
 
-    # post handel
+    def post(self, request, slug):
+        quiz = get_object_or_404(Quiz, slug = slug)
+        formset = optionformset(request.POST)
+        question = QuestionForm(request.POST)
+        if question.is_valid() and formset.is_valid():
+            question = question.save(commit=False)
+            question.quiz = quiz
+            question.save()
+            for form in formset:
+                option = form.save(commit=False)
+                option.question = question
+                option.save()
+            messages.success(request, ('question is created successfully for quiz'.format(quiz.title)))
+            return redirect('core:create_questions', slug=slug)
+        else:
+            context = {
+                'quiz' : quiz,
+                'questionform' : questionform,
+                'formset' : formset,
+            }
+            return render(self.request, 'core/question_create.html', context)
 
 
 class AttemptQuiz(View):
@@ -80,6 +102,7 @@ class AttemptQuiz(View):
         #     record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
         #     if datetime.now()-record.timestamp:
 
+# attempt quiz if atleast one question exists
 
         record = Record(user = request.user, quiz=quiz, questions=questions_order)
         key =[]
@@ -98,7 +121,8 @@ class AttemptQuiz(View):
             'questions' : questions,
             'quiz' : quiz,
         }
-        return render(self.request, 'core/quiz_attempt.html', context)
+        # return render(self.request, 'core/quiz_attempt.html', context)
+        return redirect('core:attempt', slug = quiz.slug, id=record.id, index=1)
 
     def post(self, request, slug):
         form = request.POST
@@ -171,6 +195,47 @@ class AttemptQuiz(View):
 #         else:
 #             print('!@@#########################@@!')
 #             pass
+
+
+class Attempt(View):
+    def get(self, request, slug, id, index):
+        quiz  = get_object_or_404(Quiz, slug = slug)
+        record = get_object_or_404(Record, id = id)
+        question = get_object_or_404(Question, id = record.questions[index-1])
+        number = len(record.questions)
+        index += 1
+        context = {
+            'quiz' : quiz,
+            'record' : record,
+            'question' : question,
+            'index' : index,
+            'number' : number,
+        }
+        return render(self.request, 'core/attempt.html', context)
+
+    def post(self, request, slug, id, index):
+        record = get_object_or_404(Record, id = id)
+        for key,value in request.POST.items():
+            if key != 'csrfmiddlewaretoken' and key != 'button':
+                answer = value
+        try :
+            response = get_object_or_404(Response, record = record)
+            response.answers.append(answer)
+        except :
+            response = Response(record = record,answers = [answer])
+        response.save()
+        if index <= len(record.questions):
+            return redirect('core:attempt', slug = slug, id=id, index = index)
+        else:
+            count = 0
+            for i in range(len(record.key)):
+                if record.key[i] == response.answers[i]:
+                    count +=1
+            response.correct = count
+            response.total_questions = len(record.key)
+        response.save()
+        return redirect('core:quiz_result', slug = slug, id=record.id)
+
 
 
 class RecordResponse(View):

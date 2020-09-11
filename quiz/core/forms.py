@@ -1,4 +1,6 @@
 from django import forms
+from django.forms import modelformset_factory
+
 from .models import (
     Quiz,
     Question,
@@ -20,3 +22,9 @@ class OptionForm(forms.ModelForm):
     class Meta:
         model = Option
         fields = ['answer', 'option',]
+
+
+optionformset = modelformset_factory(
+    Option,
+    fields = ['answer' , 'option']
+)

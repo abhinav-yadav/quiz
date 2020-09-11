@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'rest_framework',
     'widget_tweaks',
+    'formset_bootstrap',
 
 
     'core.apps.CoreConfig',

@@ -28,3 +28,8 @@ class Setting(View):
             return render(request,'settings.html')
         else:
             return redirect('account_login')
+
+
+class Activity(View):
+    def get(self, request):
+        return redirect('home')

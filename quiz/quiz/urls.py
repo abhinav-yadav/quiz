@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from .views import Home,about,Setting
+from .views import Home,about,Setting,Activity
 
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
@@ -11,6 +11,7 @@ urlpatterns = [
     path('quiz/', include("core.urls")),
     path('about/', about , name = 'about'),
     path('settings/', Setting.as_view(), name='setting'),
+    path('activity/', Activity.as_view(), name= 'activity'),
     path('', Home.as_view(), name='home'),
 ]
 
