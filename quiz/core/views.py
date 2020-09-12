@@ -56,14 +56,17 @@ class CreateQuiz(View):
         return redirect('core:create_questions', slug = quiz.slug)
 
 class CreateQuestion(View):
+    # handle the image of the question
     def get(self, request, slug):
         quiz = get_object_or_404(Quiz, slug=slug)
         questionform = QuestionForm(request.GET or None)
         formset = optionformset(queryset = Option.objects.none())
+        questions = Question.objects.filter(quiz=quiz)
         context = {
             'quiz' : quiz,
             'questionform' : questionform,
             'formset' : formset,
+            'questions' : questions,
         }
         return render(self.request, 'core/question_create.html', context)
 
@@ -77,8 +80,9 @@ class CreateQuestion(View):
             question.save()
             for form in formset:
                 option = form.save(commit=False)
-                option.question = question
-                option.save()
+                if option.option:
+                    option.question = question
+                    option.save()
             messages.success(request, ('question is created successfully for quiz'.format(quiz.title)))
             return redirect('core:create_questions', slug=slug)
         else:
@@ -88,6 +92,13 @@ class CreateQuestion(View):
                 'formset' : formset,
             }
             return render(self.request, 'core/question_create.html', context)
+
+class DeleteQuestion(View):
+    def get(self, request, slug,id):
+        question = get_object_or_404(Question, id = id)
+        question.delete()
+        return redirect('core:create_questions',slug = slug)
+
 
 
 class AttemptQuiz(View):

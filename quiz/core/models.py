@@ -33,6 +33,13 @@ class Question(models.Model):
     quiz = models.ForeignKey(Quiz, default=None, on_delete = models.SET_NULL, null = True)
     type = models.CharField(choices = QUESTION_TYPE, max_length = 10)
     question = models.CharField(max_length  = 1000, null = False)
+    image = models.ImageField(upload_to = 'question_banner',
+            null=True,
+            blank=True,
+            width_field="width_field",
+            height_field="height_field")
+    height_field = models.IntegerField(default=0)
+    width_field = models.IntegerField(default=0)
     time = models.IntegerField(default = 45)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
@@ -45,12 +52,13 @@ class Question(models.Model):
 
 
 class Option(models.Model):
-    question = models.ForeignKey(Question, on_delete = models.SET_NULL, null = True)
+    question = models.ForeignKey(Question, on_delete = models.CASCADE,null = True)
     answer = models.BooleanField(default = False)
     option  = models.CharField(max_length = 400, blank = True)
 
     def __str__(self):
-        return 'q-'+ str(self.question.id) +'--'+self.option
+        # return 'q-'+ str(self.question.id) +'--'+self.option
+        return str(self.id)
 
 class Record(models.Model):
     user = models.ForeignKey(User, default = None, on_delete = models.SET_NULL, null = True)

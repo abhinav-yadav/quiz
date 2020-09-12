@@ -2,7 +2,7 @@ from django.template import Library
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
-from core.models import Question
+from core.models import Question,Option
 
 register = Library()
 
@@ -22,3 +22,11 @@ def option_color(index, option, key, answer):
 def get_question(id):
     question = get_object_or_404(Question, id=id)
     return question
+
+
+@register.simple_tag
+def question_answer(id):
+    option = get_object_or_404(Option, id=id)
+    if option.answer:
+        return '#1cd21c6b'
+    return ''

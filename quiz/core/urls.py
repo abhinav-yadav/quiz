@@ -7,6 +7,7 @@ from .views import (
     Result,
     RecordResponse,
     Attempt,
+    DeleteQuestion,
 )
 
 app_name = 'core'
@@ -19,4 +20,5 @@ urlpatterns = [
     path('attempt1/<slug>/<int:id>/<int:index>/', Attempt.as_view(), name = 'attempt'),
     path('result/<slug>/<id>/', Result.as_view(), name = 'quiz_result'),
     path('record_response/', RecordResponse.as_view(), name = 'ajax_record_response'),
+    path('delete/<slug>/question/<id>/', DeleteQuestion.as_view(), name = "delete_question"),
 ]
