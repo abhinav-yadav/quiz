@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
+from django.template.loader import render_to_string
 from django.views import View
 
 from datetime import datetime
@@ -53,24 +54,37 @@ class CreateQuiz(View):
                 'form' : quizform,
                 }
             return render(self.request, 'core/create.html', context)
-        return redirect('core:create_questions', slug = quiz.slug)
+        return redirect('core:edit_quiz', slug = quiz.slug)
+
+
+
+class EditQuiz(View):
+    def get(self, request, slug):
+        quiz = get_object_or_404(Quiz, slug=slug)
+        questions = Question.objects.filter(quiz=quiz)
+        context = {
+            'quiz' : quiz,
+            'questions' : questions,
+        }
+        return render(self.request, 'core/quiz_edit.html', context)
+
 
 class CreateQuestion(View):
     # handle the image of the question
     def get(self, request, slug):
-        quiz = get_object_or_404(Quiz, slug=slug)
+        quiz = get_object_or_404(Quiz, slug = slug)
         questionform = QuestionForm(request.GET or None)
         formset = optionformset(queryset = Option.objects.none())
-        questions = Question.objects.filter(quiz=quiz)
         context = {
-            'quiz' : quiz,
             'questionform' : questionform,
             'formset' : formset,
-            'questions' : questions,
+            'quiz' : quiz,
         }
-        return render(self.request, 'core/question_create.html', context)
+        html_code = render_to_string('core/question_form.html', context, request = request)
+        return JsonResponse({ 'html_code' : html_code })
 
     def post(self, request, slug):
+        data = dict()
         quiz = get_object_or_404(Quiz, slug = slug)
         formset = optionformset(request.POST)
         question = QuestionForm(request.POST)
@@ -83,15 +97,17 @@ class CreateQuestion(View):
                 if option.option:
                     option.question = question
                     option.save()
+            data['form_is_valid'] = True
             messages.success(request, ('question is created successfully for quiz'.format(quiz.title)))
-            return redirect('core:create_questions', slug=slug)
         else:
+            data['form_is_valid'] = False
             context = {
                 'quiz' : quiz,
                 'questionform' : questionform,
                 'formset' : formset,
             }
-            return render(self.request, 'core/question_create.html', context)
+            data['html_code'] = render_to_string('core/question_form.html', context, request=request)
+        return JsonResponse(data)
 
 class DeleteQuestion(View):
     def get(self, request, slug,id):

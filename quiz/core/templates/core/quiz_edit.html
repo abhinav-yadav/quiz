@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load core_tags %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="">
+  <h3>Quiz</h3>
+  <h6>{{quiz.title}}</h6>
+  <hr>
+  <p>
+    <button type="button" class="btn btn-primary js-create-question">
+      <i class="fa fa-plus" aria-hidden="true"></i>
+      New Question
+    </button>
+  </p>
+</div>
+{% for question in questions %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h6 class="card-title">Question - {{forloop.counter}}</h6>
+    <b><p class="card-text">{{question.question}}</p></b>
+  </div>
+  {% if question.image %}
+  <img class="card-img-top" src="{{ question.image.url }}" alt="Card image cap">
+  {% endif %}
+  <ul class="list-group list-group-flush">
+    {% for option in question.get_options %}
+    <li class="list-group-item" style="background:{% question_answer option.id %};">{{option.option}}</li>
+    {% endfor %}
+  </ul>
+  <div class="card-body">
+    <a href="#" class="card-link">edit</a>
+    <a href="#{{question.id}}" class="card-link">delete</a>
+  </div>
+</div>
+<br>
+{% empty %}
+  <div class="">
+    <p class = "text-center bg-warning" >No questions</p>
+  </div>
+{% endfor %}
+<div class="modal fade" id="modal-question">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block custom_js %}
+<script src="{% static 'formset_bootstrap/js/jquery.formset.js' %}"></script>
+<script src="{% static 'js/question.js'%}"></script>
+<script type="text/javascript">
+  $(function () {
+
+    $(".js-create-question").click(function () {
+      $.ajax({
+        url: '{% url 'core:create_questions' quiz.slug %}',
+        type: 'get',
+        dataType: 'json',
+        beforeSend: function () {
+          $("#modal-question").modal("show");
+        },
+        success: function (data) {
+          $("#modal-question .modal-content").html(data.html_code);
+        }
+      });
+    });
+
+  });
+</script>
+{% endblock %}
