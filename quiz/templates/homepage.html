@@ -15,6 +15,7 @@
           a test of knowledge, especially as a competition between individuals or teams as a form of entertainment.
         </p>
         <button type="button" class="mr-1 badge badge-info ar" onclick="window.location.href='{% url 'core:attempt_quiz' slug=quiz.slug %}';">attempt<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
+        <button type="button" class="mr-1 badge badge-info ar" onclick="window.location.href='{% url 'core:edit_quiz' slug=quiz.slug %}';">edit<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
       </figcaption>
       <footer>
         <div class="views"><i class="ion-eye"></i>99</div>

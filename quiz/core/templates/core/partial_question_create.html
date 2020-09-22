@@ -1,5 +1,4 @@
-{% load crispy_forms_tags %}
-<form method="post" action="{% url 'core:create_questions' quiz.slug %}" class="js-question-create-form">
+<form method="post" action="{% url 'core:create_question' quiz.slug %}" class="js-question-create-form">
   {% csrf_token %}
   <div class="modal-header">
     <h4 class="modal-title">Create a new question</h4>
@@ -8,15 +7,7 @@
     </button>
   </div>
   <div class="modal-body">
-    {{questionform|crispy}}
-    <br>
-    <h6>Options</h6>
-    <div  class="myForm">
-      {% for form in formset %}
-      {{form}}
-      {% endfor %}
-    </div>
-    {{ formset.management_form }}
+    {% include 'core/partial_question_form.html' %}
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -24,7 +15,5 @@
   </div>
 </form>
 <script type="text/javascript">
-  $(function() {
     $('.myForm').formset();
-  })
 </script>

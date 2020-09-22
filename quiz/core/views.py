@@ -61,7 +61,8 @@ class CreateQuiz(View):
 class EditQuiz(View):
     def get(self, request, slug):
         quiz = get_object_or_404(Quiz, slug=slug)
-        questions = Question.objects.filter(quiz=quiz)
+        questions = Question.objects.filter(quiz = quiz)
+
         context = {
             'quiz' : quiz,
             'questions' : questions,
@@ -80,7 +81,7 @@ class CreateQuestion(View):
             'formset' : formset,
             'quiz' : quiz,
         }
-        html_code = render_to_string('core/question_form.html', context, request = request)
+        html_code = render_to_string('core/partial_question_create.html', context, request = request)
         return JsonResponse({ 'html_code' : html_code })
 
     def post(self, request, slug):
@@ -98,7 +99,12 @@ class CreateQuestion(View):
                     option.question = question
                     option.save()
             data['form_is_valid'] = True
-            messages.success(request, ('question is created successfully for quiz'.format(quiz.title)))
+            questions = Question.objects.filter(quiz = quiz)
+            context={
+              'questions' : questions,
+              'quiz' : quiz,
+            }
+            data['html_code'] = render_to_string('core/partial_question_list.html', context, request = request)
         else:
             data['form_is_valid'] = False
             context = {
@@ -106,16 +112,55 @@ class CreateQuestion(View):
                 'questionform' : questionform,
                 'formset' : formset,
             }
-            data['html_code'] = render_to_string('core/question_form.html', context, request=request)
+            data['html_code'] = render_to_string('core/partial_question_create.html', context, request=request)
         return JsonResponse(data)
 
 class DeleteQuestion(View):
-    def get(self, request, slug,id):
+    def get(self, request, slug, id):
+        data = dict()
         question = get_object_or_404(Question, id = id)
+        quiz = get_object_or_404(Quiz, slug = slug)
+        context = {
+            'question' : question,
+            'quiz' : quiz,
+        }
+        data['html_code'] = render_to_string('core/partial_question_delete.html', context, request=request)
+        return JsonResponse(data)
+
+    def post(self, request, slug, id):
+        data = dict()
+        question = get_object_or_404(Question, id = id)
+        quiz = get_object_or_404(Quiz, slug = slug)
         question.delete()
-        return redirect('core:create_questions',slug = slug)
+        data['form_is_valid'] = True
+        questions = Question.objects.filter(quiz = quiz)
+        context={
+          'questions' : questions,
+          'quiz' : quiz,
+        }
+        data['html_code'] = render_to_string('core/partial_question_list.html', context, request = request)
+        return JsonResponse(data)
 
 
+class EditQuestion(View):
+    def get(self, request, slug, id):
+        data = dict()
+        quiz = get_object_or_404(Quiz, slug = slug)
+        question = get_object_or_404(Question,id = id)
+        questionform = QuestionForm(instance = question)
+        formset = optionformset(queryset = Option.objects.filter(question = question))
+        context = {
+            'quiz' : quiz,
+            'questionform' : questionform,
+            'formset' : formset,
+            'question' : question,
+        }
+        html_code = render_to_string('core/partial_question_update.html', context, request = request)
+        return JsonResponse({ 'html_code' : html_code })
+
+
+    def post(self, request, slug, id):
+        pass
 
 class AttemptQuiz(View):
     def get(self, request, slug):
