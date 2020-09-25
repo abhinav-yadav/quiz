@@ -22,9 +22,11 @@ urlpatterns = [
     path('<slug>/create/question/', CreateQuestion.as_view(), name = 'create_question'),
     path('question/<slug>/delete/<id>/', DeleteQuestion.as_view(), name = "delete_question"),
     path('question/<slug>/update/<id>/', EditQuestion.as_view(), name = "edit_question"),
-    
+
     path('attempt/<slug>/', AttemptQuiz.as_view(), name = 'attempt_quiz'),
     path('attempt1/<slug>/<int:id>/<int:index>/', Attempt.as_view(), name = 'attempt'),
+
     path('result/<slug>/<id>/', Result.as_view(), name = 'quiz_result'),
     path('record_response/', RecordResponse.as_view(), name = 'ajax_record_response'),
+
 ]

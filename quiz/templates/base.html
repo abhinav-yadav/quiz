@@ -30,9 +30,7 @@
   <link rel="stylesheet" href="{% static 'assets/fonts/material-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/fonts/ionicons.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/Pretty-Header.css' %}">
-  <link rel="stylesheet" href="{% static 'assets/css/Article-Cards.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/Header-Dark1.css' %}">
-  <link rel="stylesheet" href="{% static 'assets/css/Article.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
@@ -126,41 +124,12 @@
   });
 </script>
 <script type="text/javascript">
-  function col_width() {
-    var x = window.matchMedia("(max-width: 370px)");
-    if (x.matches) {
-      x = 270;
-    } else {
-      x = 310;
-    }
-  $('.grid').masonry({
-    itemSelector: '.article',
-    columnWidth: x,
-    isFitWidth: true
-  });
- }
-</script>
-<script type="text/javascript">
-    var x = window.matchMedia("(max-width: 370px)");
-    if (x.matches) {
-      x=270;
-    } else {
-      x=310;
-    }
   $('.grid').masonry({
     itemSelector: '.grid-item',
-    columnWidth: x,
-    isFitWidth: true
-  });
-</script>
-<script type="text/javascript">
-  $('.grid1').masonry({
-    itemSelector: '.grid-item',
-    columnWidth: 100,
+    columnWidth: 260,
     isFitWidth: true
   });
 </script>
 {% block custom_js %}{% endblock %}
 </body>
-
 </html>

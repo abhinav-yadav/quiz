@@ -162,56 +162,6 @@ class EditQuestion(View):
     def post(self, request, slug, id):
         pass
 
-class AttemptQuiz(View):
-    def get(self, request, slug):
-        quiz = get_object_or_404(Quiz, slug=slug)
-        questions  = Question.objects.filter(quiz=quiz).order_by('?')
-        questions_order = []
-        for i in questions:
-            questions_order.append(i.id)
-        # # resume feature
-        # try:
-        #     record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
-        #     if datetime.now()-record.timestamp:
-
-# attempt quiz if atleast one question exists
-
-        record = Record(user = request.user, quiz=quiz, questions=questions_order)
-        key =[]
-        for i in questions:
-            options = Option.objects.filter(question=i)
-            for option in options:
-                if option.answer:
-                    key.append(option.option)
-        record.key = key
-        record.save()
-        # paginator = Paginator(questions, 1)
-        # page = request.GET.get('page')
-        # questions = paginator.get_page(page)
-
-        context ={
-            'questions' : questions,
-            'quiz' : quiz,
-        }
-        # return render(self.request, 'core/quiz_attempt.html', context)
-        return redirect('core:attempt', slug = quiz.slug, id=record.id, index=1)
-
-    def post(self, request, slug):
-        form = request.POST
-        answers =[]
-        for key,value in form.items():
-            if key != 'csrfmiddlewaretoken' and key != 'button':
-                answers.append(value)
-        quiz = get_object_or_404(Quiz, slug = slug)
-        record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
-        correct_count = 0
-        for i in range(len(record.key)):
-            if record.key[i] == answers[i]:
-                correct_count +=1
-        response = Response(record = record, answers = answers, total_questions = quiz.get_total_no_of_questions(), correct = correct_count )
-        response.save()
-        return redirect('core:quiz_result', slug = quiz.slug, id=record.id)
-
 # class AttemptQuiz(View):
 #     def get(self, request, slug):
 #         quiz = get_object_or_404(Quiz, slug=slug)
@@ -224,6 +174,7 @@ class AttemptQuiz(View):
 #         #     record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
 #         #     if datetime.now()-record.timestamp:
 #
+# # attempt quiz if atleast one question exists
 #
 #         record = Record(user = request.user, quiz=quiz, questions=questions_order)
 #         key =[]
@@ -235,42 +186,110 @@ class AttemptQuiz(View):
 #         record.key = key
 #         record.save()
 #
-#         answers = [None]*len(key)
-#         response = Response(record = record, answers = answers ,total_questions = len(key))
-#         response.save()
-#         # paginator = Paginator(questions, 1)
-#         # page = request.GET.get('page')
-#         # questions = paginator.get_page(page)
-#         question = questions[0]
-#         index = 0
 #         context ={
-#             'question' : question,
+#             'questions' : questions,
 #             'quiz' : quiz,
-#             'response' : response,
-#             'index' : index,
-#             'record' : record,
 #         }
-#         return render(self.request, 'core/quiz_attempt_1.html', context)
+#         # return render(self.request, 'core/quiz_attempt.html', context)
+#         return redirect('core:attempt', slug = quiz.slug, id=record.id, index=1)
 #
 #     def post(self, request, slug):
-#         record = get_object_or_404(Record, id = request.POST.get('record_id'))
-#         response = get_object_or_404(Response, id = request.POST.get('response_id'))
-#         index = request.POST.get('index')
-#         response.answers[index] = request.POST.get('question_response')
+#         form = request.POST
+#         answers =[]
+#         for key,value in form.items():
+#             if key != 'csrfmiddlewaretoken' and key != 'button':
+#                 answers.append(value)
+#         quiz = get_object_or_404(Quiz, slug = slug)
+#         record = Record.objects.filter(quiz=quiz, user=request.user).latest('timestamp')
+#         correct_count = 0
+#         for i in range(len(record.key)):
+#             if record.key[i] == answers[i]:
+#                 correct_count +=1
+#         response = Response(record = record, answers = answers, total_questions = quiz.get_total_no_of_questions(), correct = correct_count )
 #         response.save()
+#         return redirect('core:quiz_result', slug = quiz.slug, id=record.id)
+#
+#
+# class Attempt(View):
+#     def get(self, request, slug, id, index):
+#         quiz  = get_object_or_404(Quiz, slug = slug)
+#         record = get_object_or_404(Record, id = id)
+#         question = get_object_or_404(Question, id = record.questions[index-1])
+#         number = len(record.questions)
 #         index += 1
-#         if index < len(record.questions):
-#             question = get_object_or_404(Question, id = record.questions[index])
-#             response_data['question'] = question
-#             response_data['index'] = index
-#             return JsonResponse(response_data)
+#         context = {
+#             'quiz' : quiz,
+#             'record' : record,
+#             'question' : question,
+#             'index' : index,
+#             'number' : number,
+#         }
+#         return render(self.request, 'core/attempt.html', context)
+#
+#     def post(self, request, slug, id, index):
+#         record = get_object_or_404(Record, id = id)
+#         for key,value in request.POST.items():
+#             if key != 'csrfmiddlewaretoken' and key != 'button':
+#                 answer = value
+#         try :
+#             response = get_object_or_404(Response, record = record)
+#             response.answers.append(answer)
+#         except :
+#             response = Response(record = record,answers = [answer])
+#         response.save()
+#         if index <= len(record.questions):
+#             return redirect('core:attempt', slug = slug, id=id, index = index)
 #         else:
-#             print('!@@#########################@@!')
-#             pass
+#             count = 0
+#             for i in range(len(record.key)):
+#                 if record.key[i] == response.answers[i]:
+#                     count +=1
+#             response.correct = count
+#             response.total_questions = len(record.key)
+#         response.save()
+#         return redirect('core:quiz_result', slug = slug, id=record.id)
 
+class AttemptQuiz(View):
+    def get(self, request, slug):
+        data = dict()
+        quiz = get_object_or_404(Quiz, slug=slug)
+        questions = Question.objects.filter(quiz=quiz)[:3]
+        context = {
+            'quiz' : quiz,
+            'questions' : questions,
+        }
+        data['html_code'] = render_to_string('core/partial_quiz_attempt.html', context, request=request)
+        return JsonResponse(data)
+
+
+    def post(self, request, slug):
+        quiz = get_object_or_404(Quiz, slug=slug)
+        questions  = Question.objects.filter(quiz=quiz).order_by('?')
+        questions_order = []
+        for i in questions:
+            questions_order.append(i.id)
+        record = Record(user = request.user, quiz=quiz, questions=questions_order)
+        key =[]
+        for i in questions:
+            options = Option.objects.filter(question=i)
+            for option in options:
+                if option.answer:
+                    key.append(option.option)
+        record.key = key
+        record.save()
+
+        context ={
+            'questions' : questions,
+            'quiz' : quiz,
+            'record' : record,
+        }
+        # return render(self.request, 'core/quiz_attempt.html', context)
+        # return redirect('core:attempt', slug = quiz.slug, id=record.id, index=1)
+        return render(self.request, 'core/attempt1.html', context)
 
 class Attempt(View):
     def get(self, request, slug, id, index):
+        data = dict()
         quiz  = get_object_or_404(Quiz, slug = slug)
         record = get_object_or_404(Record, id = id)
         question = get_object_or_404(Question, id = record.questions[index-1])
@@ -283,10 +302,12 @@ class Attempt(View):
             'index' : index,
             'number' : number,
         }
-        return render(self.request, 'core/attempt.html', context)
+        data['html_code'] = render_to_string('core/partial_question_attempt.html', context, request=request)
+        return JsonResponse(data)
 
     def post(self, request, slug, id, index):
         record = get_object_or_404(Record, id = id)
+        answer = None
         for key,value in request.POST.items():
             if key != 'csrfmiddlewaretoken' and key != 'button':
                 answer = value
@@ -329,8 +350,23 @@ class RecordResponse(View):
 
 
 
+# class Result(View):
+#     def get(self, request, slug, id):
+#         quiz = get_object_or_404(Quiz, slug = slug)
+#         record = get_object_or_404(Record, id = id)
+#         questions = Question.objects.filter(quiz = quiz)
+#         response = get_object_or_404(Response, record = record)
+#         context ={
+#             'quiz' : quiz,
+#             'record' : record,
+#             'questions' : questions,
+#             'response' : response,
+#         }
+#         return render(self.request, 'core/result.html', context)
+
 class Result(View):
     def get(self, request, slug, id):
+        data = dict()
         quiz = get_object_or_404(Quiz, slug = slug)
         record = get_object_or_404(Record, id = id)
         questions = Question.objects.filter(quiz = quiz)
@@ -341,4 +377,5 @@ class Result(View):
             'questions' : questions,
             'response' : response,
         }
-        return render(self.request, 'core/result.html', context)
+        data['html_code'] = render_to_string('core/partial_result.html', context, request=request)
+        return JsonResponse(data)

@@ -1,29 +1,53 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content1 %}
-<div class="grid">
-  {% for quiz in quizes %}
-  <div class="grid-item">
-    <figure class="article">
-      {% if quiz.image %}
-      <div class="image"><img src="{{ quiz.image.url }}" alt="quiz_image"></div>
-      {% endif %}
-      <figcaption>
-        <div class="date"><span class="day">{{ quiz.timestamp|date:"d" }}</span><span class="month">{{ quiz.timestamp|date:"F" }}</span></div>
-        <h3>{{ quiz.title }}</h3>
-        <p>
-          a test of knowledge, especially as a competition between individuals or teams as a form of entertainment.
-        </p>
-        <button type="button" class="mr-1 badge badge-info ar" onclick="window.location.href='{% url 'core:attempt_quiz' slug=quiz.slug %}';">attempt<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
-        <button type="button" class="mr-1 badge badge-info ar" onclick="window.location.href='{% url 'core:edit_quiz' slug=quiz.slug %}';">edit<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></button>
-      </figcaption>
-      <footer>
-        <div class="views"><i class="ion-eye"></i>99</div>
-        <div class="love"><i class="ion-heart"></i>108</div>
-        <div class="comments"><i class="ion-chatboxes"></i>66</div>
-      </footer>
-    </figure>
+<div class="jumbotron">
+  <div class="grid" id="quiz-list">
+    {% for quiz in quizes %}
+    <button type="button"  class="js-grid-item" data-url="{% url 'core:attempt_quiz' slug=quiz.slug %}">
+    <div class="grid-item">
+      <div class="card" style="width: 250px;margin : 4px;">
+        {% if quiz.image %}
+        <img src="{{ quiz.image.url }}" class="card-img-top" alt="quiz_image">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ quiz.title }}</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+      </div>
+    </div>
+    </button>
+    {% endfor %}
   </div>
-  {% endfor %}
+</div>
+<div class="modal fade" id="modal-quiz">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content"></div>
+  </div>
 </div>
 {% endblock content1 %}
+
+{% block custom_js %}
+<script type="text/javascript">
+  $(function() {
+
+    /* Functions */
+
+    var loadForm = function() {
+      var btn = $(this);
+      $.ajax({
+        url: btn.attr("data-url"),
+        type: 'get',
+        dataType: 'json',
+        beforeSend: function() {
+          $("#modal-quiz").modal("show");
+        },
+        success: function(data) {
+          $("#modal-quiz .modal-content").html(data.html_code);
+        }
+      });
+    };
+    $("#quiz-list").on("click", ".js-grid-item", loadForm);
+  });
+</script>
+{% endblock %}
