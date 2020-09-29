@@ -1,17 +1,29 @@
-{% extends "base.html" %}
+{% extends 'base1.html' %}
 {% load static %}
 {% block content1 %}
+<div class="" style="margin-top:5px;">
+  <ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Completed <i class="fa fa-clock-o" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'created' %}">Created <i class="fa fa-file-text" aria-hidden="true"></i>
+      </a>
+    </li>
+  </ul>
+</div>
 <div class="jumbotron">
   <div class="grid" id="quiz-list">
-    {% for quiz in quizes %}
-    <button type="button"  class="js-grid-item" data-url="{% url 'core:attempt_quiz' slug=quiz.slug %}">
+    {% for record in records %}
+    <button type="button"  class="js-grid-item" data-url="{% url 'core:user_quiz_record' record.quiz.slug %}">
     <div class="grid-item">
       <div class="card" style="width: 250px;margin : 4px;">
-        {% if quiz.image %}
-        <img src="{{ quiz.image.url }}" class="card-img-top" alt="quiz_image">
+        {% if record.quiz.image %}
+        <img src="{{ record.quiz.image.url }}" class="card-img-top" alt="quiz_image">
         {% endif %}
         <div class="card-body">
-          <h5 class="card-title">{{ quiz.title }}</h5>
+          <h5 class="card-title">{{ record.quiz.title }}</h5>
           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
         </div>
       </div>
@@ -21,12 +33,11 @@
   </div>
 </div>
 <div class="modal fade" id="modal-quiz">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content"></div>
   </div>
 </div>
 {% endblock content1 %}
-
 {% block custom_js %}
 <script type="text/javascript">
   $(function() {

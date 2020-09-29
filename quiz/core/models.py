@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
+from django.shortcuts import  get_object_or_404
 
 
 QUESTION_TYPE = [
@@ -66,6 +67,7 @@ class Record(models.Model):
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     questions = ArrayField(models.IntegerField(default = list))
     key = ArrayField(models.CharField(max_length=400, default=None))
+
     def __str__(self):
         s=''
         for i in self.questions:
@@ -73,8 +75,17 @@ class Record(models.Model):
         s = s[:-2]
         return s
 
+    def get_record(self):
+        record = get_object_or_404(Record, record=self)
+        return record
+
 class Response(models.Model):
     record = models.ForeignKey(Record, default = None, on_delete = models.CASCADE)
     answers = ArrayField(models.CharField(max_length=400, default=None, null = True))
     total_questions = models.IntegerField(default = 0)
     correct = models.IntegerField(default=0)
+
+    def get_quiz(self):
+        record = get_object_or_404(Record, record = self.record)
+        quiz = get_object_or_404(Quiz, quiz = record.quiz)
+        return quiz

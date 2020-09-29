@@ -3,6 +3,7 @@ from django.views import View
 
 from core.models import (
     Quiz,
+    Record,
 )
 
 class Home(View):
@@ -32,4 +33,20 @@ class Setting(View):
 
 class Activity(View):
     def get(self, request):
-        return redirect('home')
+        return redirect('completed')
+
+class Completed(View):
+    def get(self, request):
+        records = Record.objects.filter(user = request.user).distinct('quiz')
+        context = {
+            'records' : records,
+        }
+        return render(request,'completed.html',context)
+
+class Created(View):
+    def get(self, request):
+        quizes = Quiz.objects.filter(author = request.user)
+        context = {
+            'quizes' : quizes,
+        }
+        return render(request, 'created.html', context)

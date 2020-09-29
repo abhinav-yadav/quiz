@@ -253,10 +253,24 @@ class AttemptQuiz(View):
     def get(self, request, slug):
         data = dict()
         quiz = get_object_or_404(Quiz, slug=slug)
-        questions = Question.objects.filter(quiz=quiz)[:3]
+        records = Record.objects.filter(quiz=quiz,user=request.user).order_by('timestamp')
+        responses = Response.objects.none()
+        for record in records:
+            response = Response.objects.filter(record=record)
+            responses = responses.union(response)
+        responses = responses.order_by('-correct')[:3]
+
+        records = Record.objects.filter(quiz=quiz).order_by('timestamp')
+        responses_all = Response.objects.none()
+        for record in records:
+            response = Response.objects.filter(record=record)
+            responses_all = responses_all.union(response)
+        responses_all = responses_all.order_by('-correct')[:10]
+
         context = {
             'quiz' : quiz,
-            'questions' : questions,
+            'responses_all' : responses,
+            'responses' : responses_all,
         }
         data['html_code'] = render_to_string('core/partial_quiz_attempt.html', context, request=request)
         return JsonResponse(data)
@@ -378,4 +392,32 @@ class Result(View):
             'response' : response,
         }
         data['html_code'] = render_to_string('core/partial_result.html', context, request=request)
+        return JsonResponse(data)
+
+
+class UserQuizRecord(View):
+    def get(self, request, slug):
+        data = dict()
+        quiz = get_object_or_404(Quiz, slug=slug)
+        records = Record.objects.filter(quiz=quiz,user=request.user).order_by('timestamp')
+        responses = Response.objects.none()
+        for record in records:
+            response = Response.objects.filter(record=record)
+            responses = responses.union(response)
+        responses = responses.order_by('-correct')[:3]
+
+        records = Record.objects.filter(quiz=quiz).order_by('timestamp')
+        responses_all = Response.objects.none()
+        for record in records:
+            response = Response.objects.filter(record=record)
+            responses_all = responses_all.union(response)
+        responses_all = responses_all.order_by('-correct')[:10]
+
+        context = {
+            'quiz' : quiz,
+            'responses_all' : responses,
+            'responses' : responses_all,
+        }
+        data['html_code'] = render_to_string('core/user_quiz_record.html', context, request=request)
+
         return JsonResponse(data)

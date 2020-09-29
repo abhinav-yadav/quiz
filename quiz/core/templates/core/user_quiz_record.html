@@ -38,10 +38,6 @@
               <td>{{response.record.user}}</td>
               <td>{{response.correct}}/{{response.total_questions}}</td>
             </tr>
-            {% empty %}
-            <div class="">
-              <p class="text-center bg-warning">No Records</p>
-            </div>
             {% endfor %}
           </tbody>
         </table>
@@ -64,22 +60,15 @@
             <td>{{response.record.user}}</td>
             <td>{{response.correct}}/{{response.total_questions}}</td>
           </tr>
-          {% empty %}
-          <div class="">
-            <p class="text-center bg-warning">No Records</p>
-          </div>
           {% endfor %}
         </tbody>
       </table>
       <br>
       <form method="post" action="{% url 'core:attempt_quiz' quiz.slug %}" class="js-quiz-form">
         {% csrf_token %}
-        {% if responses_all|length %}
         <button type="submit" class="btn btn-success" data>Retake</button>
-        {% else %}
-        <button type="submit" class="btn btn-success" data>Start</button>
-        {% endif %}
       </form>
     </div>
   </div>
+
 </div>

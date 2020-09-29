@@ -1,4 +1,17 @@
-{% extends 'base.html' %}
-{% block content %}
-
+{% extends 'base1.html' %}
+{% load static %}
+{% load active_class %}
+{% block content1 %}
+<div class="" style="margin-top:5px;">
+  <ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Completed <i class="fa fa-clock-o" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Created <i class="fa fa-file-text" aria-hidden="true"></i>
+      </a>
+    </li>
+  </ul>
+</div>
 {% endblock %}

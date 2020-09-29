@@ -52,26 +52,21 @@
         </div>
         <hr>
         <div class="header-2"><i class="fa fa-th-large" aria-hidden="true"> Posts</i></div>
-        <div class="grid">
+        <div class="card-columns">
           {% for quiz in quizes %}
-          <div class="grid-item">
-            <figure class="article">
-              {% if quiz.image %}
-              <div class="image"><img src="{{ quiz.image.url }}" alt="quiz_image"></div>
-              {% endif %}
-              <figcaption>
-                <div class="date"><span class="day">{{ quiz.timestamp|date:"d" }}</span><span class="month">{{ quiz.timestamp|date:"F" }}</span></div>
-                <h3>{{ quiz.title }}</h3>
-                <p>
-                  a test of knowledge, especially as a competition between individuals or teams as a form of entertainment.
-                </p>
-              </figcaption>
-              <footer>
-                <div class="views"><i class="ion-eye"></i>99</div>
-                <div class="love"><i class="ion-heart"></i>108</div>
-                <div class="comments"><i class="ion-chatboxes"></i>66</div>
-              </footer>
-            </figure>
+          <div class="card">
+            {% if quiz.image %}
+            <img src="{{ quiz.image.url }}" class="card-img-top" alt="quiz_image">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ quiz.title }}</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="btn btn-warning btn-sm" onclick="location.href='{% url 'core:edit_quiz' quiz.slug %}';" >
+                <span class="glyphicon glyphicon-pencil"></span>Edit
+              </button>
+            </div>
           </div>
           {% endfor %}
         </div>

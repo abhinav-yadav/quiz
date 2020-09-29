@@ -10,6 +10,7 @@ from .views import (
     DeleteQuestion,
     EditQuiz,
     EditQuestion,
+    UserQuizRecord,
 )
 
 app_name = 'core'
@@ -22,6 +23,8 @@ urlpatterns = [
     path('<slug>/create/question/', CreateQuestion.as_view(), name = 'create_question'),
     path('question/<slug>/delete/<id>/', DeleteQuestion.as_view(), name = "delete_question"),
     path('question/<slug>/update/<id>/', EditQuestion.as_view(), name = "edit_question"),
+
+    path('record/user/<slug>', UserQuizRecord.as_view(), name= 'user_quiz_record'),
 
     path('attempt/<slug>/', AttemptQuiz.as_view(), name = 'attempt_quiz'),
     path('attempt1/<slug>/<int:id>/<int:index>/', Attempt.as_view(), name = 'attempt'),

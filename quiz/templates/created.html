@@ -1,0 +1,38 @@
+{% extends 'base1.html' %}
+{% load static %}
+{% block content1 %}
+<div class="" style="margin-top:5px;">
+  <ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link " href="{% url 'completed' %}">Completed <i class="fa fa-clock-o" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Created <i class="fa fa-file-text" aria-hidden="true"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="jumbotron">
+  <div class="grid" id="quiz-list">
+    {% for quiz in quizes %}
+    <div class="grid-item">
+      <div class="card" style="width: 290px;margin : 4px">
+        {% if quiz.image %}
+        <img src="{{ quiz.image.url }}" class="card-img-top" alt="quiz_image">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ quiz.title }}</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-warning btn-sm" onclick="location.href='{% url 'core:edit_quiz' quiz.slug %}';" >
+            <span class="glyphicon glyphicon-pencil"></span>Edit
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content1 %}

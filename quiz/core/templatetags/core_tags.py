@@ -10,13 +10,15 @@ register = Library()
 @register.simple_tag
 def option_color(index, option, key, answer):
     index -= 1
-    if option == key[index] or option == answer[index]:
-        if key[index] == answer[index] or option == answer[index]:
-            return 'green'
-        else:
-            return 'red'
+    if option == key[index]:
+            return '#1cd21c6b'
+            # this is green
     else:
-        return 'black'
+        if option == answer[index] :
+            return '#dc3545'
+            # this is red
+        else:
+            return ''
 
 @register.simple_tag
 def get_question(id):
@@ -30,3 +32,11 @@ def question_answer(id):
     if option.answer:
         return '#1cd21c6b'
     return ''
+
+@register.simple_tag
+def question_border(index, answer):
+    index -= 1
+    if answer[index]:
+        return ""
+    else:
+        return "3px solid red"
