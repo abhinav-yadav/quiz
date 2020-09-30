@@ -30,10 +30,10 @@
   <link rel="stylesheet" href="{% static 'assets/fonts/material-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/fonts/ionicons.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/Pretty-Header.css' %}">
-  <link rel="stylesheet" href="{% static 'assets/css/Article-Cards.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/Header-Dark1.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/Article.css' %}">
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/Article-Cards1.css' %}">
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 
@@ -68,7 +68,7 @@
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                   <a class="dropdown-item" role="presentation" href="{% url 'core:create' %}">New Quiz </a>
                   <a class="dropdown-item" role="presentation" href="{% url 'activity' %}">Activity</a>
-                  
+
                   <a class="dropdown-item" role="presentation" href="{% url 'profiles:profile' slug=user.username %}">Profile </a>
                   <a class="dropdown-item" role="presentation" href="{% url 'setting' %}">Settings</a>
                   <form method="post" action="{% url 'account_logout' %}">

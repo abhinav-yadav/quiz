@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content1 %}
-<div class="jumbotron">
+<div class="jumbotron" style="margin-top:5px;">
   <div class="grid" id="quiz-list">
     {% for quiz in quizes %}
     <button type="button"  class="js-grid-item" data-url="{% url 'core:attempt_quiz' slug=quiz.slug %}">

@@ -9,6 +9,10 @@ from .views import (
      Activity,
      Completed,
      Created,
+     autoCompleteView,
+     searchAutoComplete,
+     Search,
+
 )
 
 urlpatterns = [
@@ -21,6 +25,10 @@ urlpatterns = [
     path('activity/', Activity.as_view(), name= 'activity'),
     path('completed/', Completed.as_view(), name= 'completed'),
     path('created/', Created.as_view(), name = 'created'),
+
+    path('search/', Search.as_view(), name='search'),
+    path('autocomplete/', autoCompleteView, name='autocomplete'),
+    path('search-autocomplete/', searchAutoComplete, name='search-autocomplete'),
     path('', Home.as_view(), name='home'),
 ]
 

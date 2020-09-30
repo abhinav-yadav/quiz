@@ -18,7 +18,7 @@
     {% for record in records %}
     <button type="button"  class="js-grid-item" data-url="{% url 'core:user_quiz_record' record.quiz.slug %}">
     <div class="grid-item">
-      <div class="card" style="width: 250px;margin : 4px;">
+      <div class="card" style="width: 290px;margin : 4px;">
         {% if record.quiz.image %}
         <img src="{{ record.quiz.image.url }}" class="card-img-top" alt="quiz_image">
         {% endif %}
