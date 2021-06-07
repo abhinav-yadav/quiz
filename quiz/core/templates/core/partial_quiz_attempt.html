@@ -72,6 +72,7 @@
         </tbody>
       </table>
       <br>
+      {% if quiz.get_total_no_of_questions %}
       <form method="post" action="{% url 'core:attempt_quiz' quiz.slug %}" class="js-quiz-form">
         {% csrf_token %}
         {% if responses_all|length %}
@@ -80,6 +81,9 @@
         <button type="submit" class="btn btn-success" data>Start</button>
         {% endif %}
       </form>
+      {% else %}
+      <p class="text-center bg-warning">No questions to attempt Quiz</p>
+      {% endif %}
     </div>
   </div>
 </div>

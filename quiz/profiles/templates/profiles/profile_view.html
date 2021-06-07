@@ -63,10 +63,19 @@
               <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
             </div>
             <div class="card-footer">
+            {% if request.user == quiz.author %}
               <button type="button" class="btn btn-warning btn-sm" onclick="location.href='{% url 'core:edit_quiz' quiz.slug %}';" >
                 <span class="glyphicon glyphicon-pencil"></span>Edit
               </button>
-            </div>
+            {% else %}
+            <form method="post" action="{% url 'core:attempt_quiz' quiz.slug %}" class="js-quiz-form">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-warning btn-sm" >
+                <span class="glyphicon glyphicon-pencil"></span>Attempt
+              </button>
+            </form>
+            {% endif %}
+          </div>
           </div>
           {% endfor %}
         </div>
